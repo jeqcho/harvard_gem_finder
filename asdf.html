@@ -1,0 +1,357 @@
+<!DOCTYPE html><html>
+
+<head>
+    <meta charset="UTF-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><title>HarvardKey - Harvard University Authentication Service</title>
+    </title>
+
+    
+    <link rel="stylesheet" type="text/css" href="/cas/webjars/normalize.css/8.0.1/normalize.css" /><link rel="stylesheet" type="text/css" href="/cas/webjars/bootstrap/5.1.3/css/bootstrap-grid.min.css" /><link rel="stylesheet" type="text/css" href="/cas/webjars/material-components-web/13.0.0/dist/material-components-web.min.css" /><link rel="stylesheet" type="text/css" href="/cas/webjars/mdi__font/6.2.95/css/materialdesignicons.min.css" /><link rel="stylesheet" type="text/css" href="/cas/css/cas.css"/><link rel="shortcut icon"
+          href="/cas/favicon.ico" /><meta http-equiv="X-UA-Compatible" content="IE=edge" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /></head>
+
+<body class="login mdc-typography">
+<script type="text/javascript" src="/cas/webjars/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript" src="/cas/webjars/es5-shim/4.5.9/es5-shim.min.js"></script>
+    <script type="text/javascript" src="/cas/webjars/css-vars-ponyfill/2.4.7/dist/css-vars-ponyfill.min.js"></script>
+    <script type="text/javascript" src="/cas/webjars/material-components-web/13.0.0/dist/material-components-web.min.js"></script>
+<script type="text/javascript" src="/cas/js/cas.js"></script>
+<script type="text/javascript" src="/cas/js/material.js"></script>
+<script>
+    if (typeof resourceLoadedSuccessfully === "function") {
+        resourceLoadedSuccessfully();
+    }
+    $(function() {
+        typeof cssVars === "function" && cssVars({onlyLegacy: true});
+    })
+</script>
+
+<script>
+    /*<![CDATA[*/
+
+    var trackGeoLocation = false;
+
+    var googleAnalyticsTrackingId = null;
+
+    if (googleAnalyticsTrackingId != null && googleAnalyticsTrackingId != '') {
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', googleAnalyticsTrackingId, 'auto');
+        ga('send', 'pageview');
+    }
+
+    /*]]>*/
+</script>
+<div>
+
+    <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4">
+        <nav class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                <span class="cas-brand mx-auto">
+                    <span class="sr-only text-left">Harvard University</span>
+                    <img class="cas-logo" alt="Harvard University logo with shield"
+                         title="Harvard University"
+                         src="/cas/images/harvard-logo.svg" /></span>
+            </section>
+            <section class="mdc-top-app-bar__section">
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                <div class="mdc-menu-surface--anchor">
+                    <button id="menuButton" class="mdc-icon-button mdc-top-app-bar__navigation-icon" aria-haspopup="true" aria-controls="navMenu" value="SIGN IN"> <span class="mdi mdi-account"></span> <span class="sr-only">menu</span> </button>
+                    <div id="navMenu" class="mdc-menu mdc-menu-surface">
+                        <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical" tabindex="-1">
+                            <li> <a href="https://key.harvard.edu/manage-account/auto-choose" class="mdc-list-item" role="menuitem" tabindex="-1"> <span class="mdc-list-item__ripple"></span> <i class="mdi mdi-cog material-icons mdc-list-item__graphic" aria-hidden="true"></i> <span class="mdc-list-item__text">Account Settings</span> </a> </li>
+                            <li> <a href="/cas/logout" class="mdc-list-item" role="menuitem" tabindex="-1"> <span class="mdc-list-item__ripple"></span> <i class="mdi mdi-logout material-icons mdc-list-item__graphic" aria-hidden="true"></i> <span class="mdc-list-item__text">Logout</span> </a> </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </nav>
+
+    </header>
+
+
+    <script>var countMessages = 0;</script>
+    <div
+            class="mdc-dialog cas-notification-dialog"
+            id="cas-notification-dialog" role="alertdialog"
+            aria-modal="true" aria-labelledby="notif-dialog-title"
+            aria-describedby="notif-dialog-content">
+
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title">
+                    Notifications
+                </h1>
+                <div class="mdc-dialog__content" id="notif-dialog-content">
+                    </div>
+                <footer class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept"
+                            data-mdc-dialog-button-default>
+                        <span class="mdc-button__label">OK</span>
+                    </button>
+                </footer>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+
+    <script type="text/javascript">
+
+        (function (material) {
+            var header = {
+                init: function () {
+                    material.autoInit();
+                },
+                checkCaps: function (ev) {
+                    var s = String.fromCharCode(ev.which);
+                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
+                        ev.target.parentElement.classList.add('caps-on');
+                    } else {
+                        ev.target.parentElement.classList.remove('caps-on');
+                    }
+                },
+                attachNotificationDialog: function () {
+                    var element = document.getElementById('cas-notification-dialog');
+                    if (element != null) {
+                        return material.dialog.MDCDialog.attachTo(element);
+                    }
+                    return undefined;
+                },
+                attachNotificationToggle: function (dialog) {
+                    var btn = document.getElementById('cas-notifications-menu');
+                    if (btn != null) {
+                        btn.addEventListener('click', function () {
+                            dialog.open();
+                        });
+                    }
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                header.init();
+                if (countMessages == 0) {
+                    window.jQuery('#notifications-count').remove();
+                } else {
+                    window.jQuery('#notifications-count').text("(" + countMessages + ")")
+                }
+            });
+        })(mdc);
+    </script>
+</div>
+
+<div class="mdc-drawer-scrim"></div>
+
+<div class="mdc-drawer-app-content mdc-top-app-bar--fixed-adjust d-flex justify-content-center">
+    <main role="main" id="main-content" class="w-100">
+        <div class="alert alert-secondary" role="alert">
+            </div>
+        <div id="content" class="d-flex justify-content-center mt-4">
+
+    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-25">
+        <section id="loginForm"
+                 class="login-section login-form">
+            <div class="d-flex flex-column justify-content-between m-auto">
+                <h1><span class="hk-wm-a">HARVARD</span><span class="hk-wm-b">KEY</span><br style="line-height:0; font-size:0;"><span style="line-height:0">Sign In</span></h1>
+            </div>
+            <div class="d-flex flex-column justify-content-between m-auto">
+        <div class="form-wrapper">
+            <form method="post" id="fm1" action="login">
+
+                <section class="cas-field my-3" id="usernameSection">
+                    <div class="d-flex">
+
+                        <label for="username" class="mdc-text-field mdc-text-field--outlined">
+                            <input class="mdc-text-field__input"
+                                   id="username"
+                                   size="25"
+                                   type="text"
+                                   autofocus
+                                   autocomplete="username" name="username" value=""/><span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                  <span class="mdc-floating-label">Email Address</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                              </span>
+                        </label>
+
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            var username = "";
+                            var disabled = false;
+
+                            if (username != null && username !== '') {
+                                $('#username').val(username);
+                                if (disabled) {
+                                    $('#usernameSection').hide();
+                                }
+                            }
+                            /*]]>*/
+                        </script>
+                    </div>
+                </section>
+
+                <section class="cas-field my-3 mdc-input-group" id="passwordSection">
+                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                        <div class="d-flex caps-check">
+
+                            <label for="password"
+                                   class="mdc-text-field mdc-text-field--outlined">
+
+                                <input class="mdc-text-field__input pwd"
+                                       type="password" id="password" size="25"
+                                       autocomplete="current-password" name="password" value=""/><span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                          <span class="mdc-floating-label">Password</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                            </label>
+                            <button id="toggle-password" class="reveal-password material-icons mdc-text-field__icon mdc-text-field__icon--trailing mdi mdi-eye reveal-password-icon" type="button"  aria-label="Show password as plain text"><span id="pbtxt" class="sr-only">Show password</span></button>
+                            
+                        </div>
+
+                        <div class="mdc-text-field-helper-line caps-warn">
+                            <p
+                                    class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
+                                <span>CAPSLOCK key is turned on!</span>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="cas-field my-3">
+                    </section>
+
+                <section class="cas-field">
+
+                    <div>
+            </div>
+
+                    <input type="hidden" name="execution" value="66245b70-8d05-4fda-9b0c-04d9eeee1423_ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmtfZFRUV2NmYUFrMGdFaTZBbjhCUC1CRWktUFdfd0swaG8zNnh1aFlCalV2SEhKU0pyX21yWmdjbk81Sm5lWDdkaDdOOGRBd0lPVUxmZE1sU0JjcWFYYlNWdG1Ha1E5cFo0N29sZS16VGt6c2N5ekZ4b2lUTzhzdXdJN2hxZGJXT3FVeWdjdHlia0ZscnhHcXZKZ3dabVlQZ2lXNWc0b0p0aFM2Vi0wQkhuWkIxUk1VV1phaFl2bXYwR2pSYWNGTVBlcUgzZXdQakwzTWFDU1JkWGRucVBDTmRPbUVKdTZmaW9VNWMxbllUUUdBc3RISnZyUlA0OXhfbVVFeXZsSV9oTE1sTHhmQkdlc3duYm5iWWtzTmtYd2NfWUpYNTlkaC1QZERCMWg4am5KMmJNci10YUNxdWlaTGlJZDhWZmdJMC1tQ280UzMtRTd1Q1ZtVHpzYjRBYTJ1a3VDN2pRMnpIbnRoczZvblY3bldudzFjV2lPWE5Bb0F4NVFrTUVFUE51MHpFYkNvOUR2RHdUdDd6VTlpTERnTFJIN0EwTHlfU0RzT0VTNFlHVnpOaURwNU9nSGM3YkEyQkdZS1A2YlF6T0xpM2ZKZ3lqRjFQUXY2QmZkdndZQk16bS1jdHFhUzUyNVJ1VWJVbldRR2trZlhBRVNBMEd5by1tSTRmdGZKdjFnLTZMYjEtWEpETEZyN3BMc2hKa3I4elpIZTRiUUZiMUJUNHdTc1M3WmdtLXN6UmlVQWc3N0hyXzlrX0J4MkcteFZCWWJhY1F1SXBtdlpqbU1qd05ZZUFlV0lPVHcxVnRoR05TYXpaVFFBSjF6ekt0dzNZUW9PRDRDZHhOSGZGTzkyX3J4SmFxVGxXSTk1ekxoS29Fb0wtSXdDRHJDSERpN0RvbzlzVzFoYWRWTTZHbElBakNNMDdOQjB4Rk52c0JNd3p1bmFzcEJTM1REZW9TTWo2aFloanZRbWEyS1NVSTlpa0NMWlBrck15OURVSFp3MW1mdHJadk9JaWN1MVlLZ2xabEY5MDBsejBlOG0yVGR2a2VWWGQyTjdHeXk3M0pVRHZ6SnBaNkdydHA2YUFCSHZXVm41S0VmaTVDUzd4Y2JiMEhjczJpMXR1RU1Tc0YtMUJhZnlqZnI2Vl9SRHhCWTB2UVc1Qk9kUDJwSlJBR1FmUlkwWG1iY1kxc3FrcVFmZHpqYXMtUDdSZ1M5MzViR1dTZ0docXN1bk0xeC12X09PR2NOM0JsbzhGTU9PTlphX21BWnIxMXJJRG84ZEJsTC1RT1J4X0lyNElfVkxxa1E2WGZ4VmZ6X1FmeUEzemlkQ09fWjViRTRxbVF0c29iT01iSlRmMnA4aDZjV1Y1ZmpsbVNZMTNORkFqVFQzRk5KSy1qZmtraS1sUktLMHp3Z2d4UlBlMGNQMkxEOHZrQmtBRERXbGZQOVJiVUVtcXlqYTRoMTBNLWw5UDI2Z2ZOcGcxTFU1NmNYTEJ5eGJ1NlFFYlFDS3Q3cl9qd1daRDgzWlVuMi1jUlNJckp6T0VTZTQ3cGl5a2ROcm93cm5oYW1RRjNpR0Vzc0VsenZlSmExbFNtYnphSXVCZ29uNmFKd3EwYnBONTF6d1U0T2FKYjkyeGJQbnlWZExTaW01MDVwRGJmUFF3THQ5Y2hsVzJfemdoazJROXpuUWFydWVqNm56NzZaaWh4bTY4a01MR0dkWTdfbVl6WC0wRzluazY5Zmx1NUQ1WUhwNndYUlo0aVVObUJvZnRybE9MTXFsaUlUMEJtOXJRa2xIV193NWxpOUtURzZWV3ozdzd6Z1ZVUGRuSlptRGlsVVFYUnNSdE51R05xcUNCRW56Tkp1S2JZaHlzdzB4Y2haRkEyYWdCWXZBaUVHY2NEMExiNy1HVUQ2dk04SWdJeTUwNDc4NTRXOGoyYmhIQ25PaEJIa1BlYzM0SjNJNzhEOUZtZEdQbDBqR25od2hTd0tqdk5UV29LYjBzdGktMmlWSmp5V3pMS1QycmE1bkthTllsQ2tYT18xa1JkNWhqVG1mT3NsR2d3eHpvM2QtNm1nR2llNXo3QlFVbGhJZWh1Q1N0bGNRdFMyeFRYZWpCTU5ITGpsZVBjanZRdER2Vm0yZU1XeTJiOExBUEwtQXIwbi1MSlJpbm41ZnNtMW5ZSkZLT1ZVWkJ4NUNtTjV1NThjbm1GNDNjdW9fT05oNGhPQUZIamVWdzlXZFk0OE8wN0pDdUpKbVZkR1VLdVRmcS04ell4SEpXbXNsQlBBNXJJd2NMM2hyd1E1bzhiT3NxendIYmVVSHhoZzUwRzlPNmYzTFBwMnhTWTY3Y0xCalkxZzZqeW83Q2xmdHh2X2RxcEk1MHlzWVZGZXFxRFJDSkpKTHVtRTVtOU1mV1pRelZ1YVVlYTdhdGZFR1Ftb1ZGNmUtZDdNbEtPblVzU3VyQW5Qb0ZaWEs2cDljRFZzUmtuTFlETC0xb1o4Q0RCZWJRX2gtR2FKUTVPYjdIVVJpSmhrY0RGREJOLWRzdFNST2ozMk9sTTR5LU85VURWUGR5U09SNUliUE8xcjBHV3ozUGxZSXNnWklTYXQzdFdXdE1pM0NNbzZjTlB6RDNnaWJVRDkyRDUySEpDbzRubVNmWVNoZ2V2QnhJLUtKWVg2dzc2U3M0YlBYMkh4WnJQTjF3WTZWVHZpMmMydDQzQzVpTEFhVWs3MnN1amJuTXEzRk5wMmswRlNlMEJsbC1saWlKel8tVXVESnR3TkNGY0k2emNXVjFDRkNxMU5NbjdTSXdrSlBiMTV6OHhTOEtBa1pjeEl2ZnVHQUJLeVA4YV9QaDVWM1VKRDR2NzVfRnc4WGFEeWJUeEV1clo1ZFdpaDhoRDhOWnRtRW9YSDd6NlRnd2pxN2tWMXc4NFRjakI2djY3dXhta0JZWGFOcFdPcXdvQ1dORGxxdHM5alhsT0RpaWlhd1VWWWxha1Z5eW1zX1IwRE1OUEFkRXB0TjBVXy1zTGJISHU0eG9keTZzSlE0d0lEel9MNlhfSnotcnlVWHJCeTV5TEpsWmxtdl9YMmdmWkxuVXgzRlhMMDJsYlpUakhDWFRGMU9EUXRtZDhzUDA0SWp4ckk1SFNyUmpsNWVOcmptOHY5WEdOTVBEdXQ1SVNtWjlXVFUwTXROQV9xVnJOb0tlaGo4angyU2R6N1l3ZTVueVhoeXRVTGhTaThrWTZiVzMtNzNPZEEzVVUwbmhqME1mLVAyeTJqZzBISFRjZlhSX2ZRZGJpQVIxa0FqUFpjZzJiRkpTSjhyUTNLRkxkdkw3NHJaYzZ0MXhoUTFGZUJqU3FGRjg3X2dKVnh4MWc1WFFWVHRmX01aT295eEVRcU9lbFhaUnFmRWpOT2pGcnh1VTVDUG10YUFrVkdHejlVcmtCWVY4ZzR1SFlrVlFmTWZaOTRKbW9OVEtmVXU4eVpyVi1RS3hVdGJXcmpBYnJFc0FqZDRVUlJyY2tOeUgzUk5temJfeW14WkNlVzJFUzBVd0Jrdk1wMWlpQjE5NXhMQlZpZEZSb0h1Ulo0c3VrTW1pc2dSMEJwbUlxV3h4emFyUHdYSnFqaGpLTjFlQ2pna1I2ZUxYRmVaeE9fd0NhS1QtNVdvSmttU2xSTUFFMjJQTHNYcmdZODBlU1J4bkFaRkdZY0dfeVBYY1VCdjA3UlpNanJWN0RCb3dmSXBZeVdic21LZjh5eVpnSzhjS1hQLWtUOFhNdmRLMGxTWk9URFNUOFZIS3h4c0hxTGxkOUpua2VMSGd0NTJRbUcxOTdtRlVYcHlsNFdXUlcteEUxSG9GZVJtcUp6aGxDcXlnemVJRjg4Q0p1bkdEVW5jenhIamxlVzlNd0l5YUtnU0RXT3lXOHZwLUNOTEpVUFdfMG5LQ216Y0ExOVRsYk5DeDFqeHpFYWU2M1pYWnBZdWxteXp5SW96aW9CWFctVjFmWXZJN0M1b3BDVDhzd29KbjNrYXFYNjNQVVNUNTNVMW83N0dhQkdkemtHRFMwdHBxeTN5Mk90ZTNmaGhlOHI4X2VGQ2RtSjRrcERqU2hRX1g1SFRKa2RUNFB4dWpkdldKN2xpZzN5LTJTSFU5eWVjVHdFMjZ2SGdfRmhyWVJqMnR4QlNTVjEzWWh4QTlRWlpwYlltazU2SEp5Qkg1NGFEWFVBWEs3RFowQ05yVnR3dHA0RUVWVEV6NFM5MmNBZEFGSWJZQ1V2NndtZFRFb2FfSDZJTEFpLWo1X1hyVUVkUmszUml5TUowX0xhWGZQd1BDamQ3NFpBWlZwQ0VyTjRMZkJuc1NPNlVxMlliZkVlSFE3aTkwQ2JjSzFNd3g4aDJZLVdlRkZ2eUFUZFZlcWVTck05NTdlSWNfWjZkQ1pKWUtMOFB3SjBhVXBrZ09CZGhsRGd4OGRSTWtYQ0NHbDllZ3VGSGtqS2JDal9QOGdIeG8zQVB4eU1EQmN5N1hyRjl3bWNFV0hDaG1nbXNfbkxxNDRTWXp5aEdyNEhpZlVVdXZjOFE4a2Ryd19tT3hmT0tVTmRWc284NFN4SDBwVnp4ZEVVdXR2SkYxRy1IeFFwSDEtYXBzU3E2VWRlZkZSOVFwVnUyLUVBX0N4b1d5OEUyLVVvSFdjTjF1cWdvRnRTUDdTQzdlYVlUeHh6U2xaUjB5UmwxSTNmVXA5VlJjRE1KbjVPZ2pWeVV6WDZtNnZxRUdzdlBvOGFWM25tdlJtQWdSMUtzekFPV0UyYk83UmFDMXRIcmFjanhOT0xSR2ZXZEtBQlZMSGxPZC1hNURKLTV5ZWZGSW0xQ040c09UWVY3NkxhMk1BLW5QWkVtMERlN1Q3Znd2Ty1jSUdpZWxjZ1R2b2ROSXRsSG9HZmNYc0FUSVBBbU5ENHkyV0lsZlBNQ0VwOGtwbnRCNWRjdS1VZ2RGZVRfNS1fSXRsTF9zX0lOOTNvajdpRDdoR2ZNVWtqWFJjSVB5cjJRWWhFeGlwdmktQ3ZMdjY0dDFORVpRR3BTYkNRXzRYcFBTZUFMd1V3RXRDSkloY3J1VF8wZUhPS3BpbkZsWVFKcXQxMmtDaWpQa1F1emVYdEZMcFVnQ0RpQ29rQzBmUDhtSlp2YUhKeHB3SGZxSzR1aUQtOUhEQjU3VGNCbUt4UVZJbmZnQ0xjazFDQUh0dG01a3NzcW9vWFNzalp4WWpmMmJBdERfbkk1NUlUeG9ETkVpTFBUVS1IWlpBb3pyUlpoX1ZTaFFHUkhzN1ZCSWxlQXJISnZqTnppWENtNUJmazc4YVJFTWExRkR4ZW1UMXd6aHR4RUtiNGRWRmpaVjJkTlFwZVpzUmVWeUE0RlBhRWt3TmU0ZjdjZkdVLTIwUkNPV3owb21udktkbDJoQS1Lb0ItYVhvQ0FsdWRqRUI2cHVjeUxRUHdNVWg2dkVvRDQzakxMZGFBZWxGTmEzMFdCdVc2MndyMFc1czhCaEFTRmpKNnNhREpHLTdqa001QXd5X1dIMURDSE5sYlFiRFQydWZTdmRNNXIzRVd6UERvQ0N3S2xPMkk5YnRHeHB3RVRWcG5YbExOWGxHeDFMWkpUNi1xVUlMX2wtemRvb0h3TlRNMWFaLXJPM1ZfWUoxQjhweVFkbjVucTdOLTBpUERubWVFVjRHT2F1d3FtZUlTLVl3NVFtZXJPUVlPWXZmQl9RY0xBQWp5SFZZU3I1MW5aSUpSNGdoLTRhV0V1cnNBdUx0cFY1MTh0em5IcGZxWjBIT3VOWk1EZ2ItRDNZNHZrMDU4eUU4NXhVaHM1WUhhaFdlOEpaeVRFWmlXWmM5WGFGNnhwMWZHeTVPV2plempITzhNTmx0NUVmLU1HeXV5VzlWemhucHNrTWdveUNiS3dIRVZaWU5hTHN2OS0wLi10a0szQTdYc28ycld0SnlsX2wxRUFwdlA5aWsxQTBOeFFqc29jR2JONXBBSHVwb3hzTjRLTDdMTTFlQ3lqY0R0QUhYSnV0dTVicTdLMl9oWHJSV2Fn"/><input type="hidden" name="_eventId" value="submit"/><input type="hidden" name="geolocation"/></section>
+
+                <div>
+
+        <button
+                class="mdc-button mdc-button--raised w-100"
+                name="submit"
+                accesskey="l"
+                type="submit">
+            <span class="mdc-button__label">SIGN IN</span>
+        </button>
+
+        </div>
+
+            </form>
+
+            <hr class="my-4"/><div id="pmlinks" class="my-2">
+    <br><div>
+        <br /><span class="fa fa-question-circle"></span>
+        <a class="btn btn-link" id="forgotPasswordExternalLink" href="https://key.harvard.edu/account-recovery/forgot-password">Forgot your password?</a>
+    </div>
+</div>
+
+            <script type="text/javascript">
+                /*<![CDATA[*/
+                var i = "One moment please..."
+                var j = "SIGN IN"
+                    /*]]>*/
+                    $(window).on('pageshow', function () {
+                        $(':submit').prop('disabled', false);
+                        $(':submit').attr('value', j);
+                    });
+
+                window.setTimeout(() => {
+                    try {
+                        document
+                            .querySelectorAll('.mdc-text-field__input:-webkit-autofill')
+                            .forEach(el => {
+                                if (el.id == "password") {
+                                    const textField = el.parentNode;
+                                    const label = textField.querySelector('.mdc-floating-label');
+                                    if (label) {
+                                        label.classList.add('mdc-floating-label--float-above');
+                                    }
+                                    const notchedSpan1 = textField.querySelector('.mdc-notched-outline');
+                                    if (notchedSpan1) {
+                                        notchedSpan1.classList.add('mdc-notched-outline--notched');
+                                    }
+                                    const notchedSpan2 = textField.querySelector('.mdc-notched-outline__notch');
+                                    if (notchedSpan2) {
+                                        notchedSpan2.setAttribute("style", "width: 61.25px;");
+                                    }
+                                }
+                            });
+                    } catch (e) { }
+                }, 200);
+
+                $(document).ready(function () {
+
+                    if (!isResourceLoaded) {
+                        preserveAnchorTagOnFormTemp();
+                    }
+
+                    $("#fm1").submit(function () {
+                        $(":submit").attr("disabled", true);
+                        $(":submit").attr("value", i);
+                        return true;
+                    });
+                });
+
+                function preserveAnchorTagOnFormTemp() {
+                    $('#fm1').submit(function () {
+                        var location = self.document.location;
+                        var hash = decodeURIComponent(location.hash);
+
+                        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
+                            hash = '#' + hash;
+                        }
+
+                        var action = $('#fm1').attr('action');
+                        if (action == undefined) {
+                            action = location.href;
+                        } else {
+                            var qidx = location.href.indexOf('?');
+                            if (qidx != -1) {
+                                var queryParams = location.href.substring(qidx);
+                                action += queryParams;
+                            }
+                        }
+                        action += hash;
+                        $('#fm1').attr('action', action);
+
+                    });
+                }
+            </script>
+
+        </div>
+    </div>
+        </section>
+        </div>
+</div>
+    </main>
+</div>
+
+<footer class="py-4 d-flex justify-content-center cas-footer flex-column text-center">
+    <div>
+        <span>Copyright © <script>document.write( new Date().getFullYear() );</script> The President and Fellows of Harvard College</span>  | <a href="http://accessibility.harvard.edu/" target="_blank">Accessibility</a> | <a href="https://accessibility.huit.harvard.edu/digital-accessibility-policy" target="_blank">Digital Accessibility</a> | <a href="https://huit.harvard.edu/harvard-key/privacy" target="_blank">Privacy</a>  | <a href="https://huit.harvard.edu/harvard-key" target="_blank">Help</a>
+    </div>
+    <div class="flex-break"></div>
+    <div>
+        The HarvardKey system, and the systems, data, and other resources that require HarvardKey authentication for access, are only for
+        legitimate Harvard University users. Use may be monitored, and improper use of the HarvardKey system or those resources may result in
+        disciplinary action and civil and criminal charges.
+    </div>
+</footer>
+
+</body>
+</html>
