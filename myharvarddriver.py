@@ -50,9 +50,9 @@ class AnyEc:
                 pass
 
 
-# start_index = 0
+start_index = 0
 # start from a specific class if an error is thrown
-start_index = course_codes.index('MICROBI 213')
+# start_index = course_codes.index('MICROBI 213')
 not_offered = []
 for package in PACKAGES[start_index:]:
     url = package[0]
