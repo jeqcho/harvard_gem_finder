@@ -31,8 +31,8 @@ this is a step-by-step guide on how to create that csv from scratch.
 
 ## Further analytics
 
-Course ratings correlate well with recommendation score
-.
+Course ratings correlate well with recommendation score.
+
 ![Course score vs recommendation score graph](readme-images/course_vs_rec.png)
 
 Course ratings also correlate well with lecturer scores, but with more scatter.
