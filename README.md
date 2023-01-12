@@ -31,27 +31,35 @@ this is a step-by-step guide on how to create that csv from scratch.
 
 ## Further analytics
 
-Course ratings correlate well with recommendation score.
+Course ratings correlate well with recommendation score
+.
 ![Course score vs recommendation score graph](readme-images/course_vs_rec.png)
 
 Course ratings also correlate well with lecturer scores, but with more scatter.
+
 ![Course score vs lecturer score graph](readme-images/course_vs_lecturer.png)
 
+Sentiment analysis on the course comments also agree well with its average course rating.
+
+![Course score vs sentiment score graph](readme-images/course_vs_sentiment.png)
+
 Most high-scoring courses have low workload.
+
 ![Course score vs workload score graph](readme-images/course_vs_workload.png)
 
 Harvard classes tend to have high ratings. It is rare to get a low score.
+
 ![Histogram of the courses by rating](readme-images/course_score_freq.png)
 
-Most Harvard classes have a workload demand of around 5 hours per week outside of classes, though the distribution is
-skewed so some classes have much higher workloads.
+Most Harvard classes have a workload demand of around 5 hours per week outside of classes, though the distribution is skewed so some classes have much higher workloads.
+
 ![Histogram of the courses by workload hours](readme-images/workload_freq.png)
 
 There is little correlation between the number of students in the class and the score of the class.
+
 ![Course score vs number of students graph](readme-images/course_vs_num.png)
 
-More analysis, and the code for the graphs can be found through
-this [Colab Notebook](https://colab.research.google.com/drive/1WR3_DSCN_aL7l6b5yqrqto8116Ktb_TY?usp=sharing). A copy of
+More analysis, and the code for the graphs can be found through this [Colab Notebook](https://colab.research.google.com/drive/1WR3_DSCN_aL7l6b5yqrqto8116Ktb_TY?usp=sharing). A copy of
 the notebook is also available in the repo above as `course_ratings_analysis.ipynb`. Remember to upload `verbose_course_ratings.csv` if you hope to tinker around.
 
 ## Website
