@@ -1,7 +1,7 @@
 # Harvard Gems
 
 ![Screenshot of the Harvard Gem website](readme-images/readme-screenshot.png)
-Web scrapper, data analysis and [website](jeqcho.github.io/harvard-gems).
+Web scrapper, data analysis and [website](https://jeqcho.github.io/harvard-gems) for the best classes at Harvard.
 
 
 If you found it useful, you can
