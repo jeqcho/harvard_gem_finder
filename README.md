@@ -63,4 +63,4 @@ this is a step-by-step guide on how to create that csv from scratch.
    Run `myharvarddriver.py` to use Selenium to get these necessary details from my.harvard.edu. Depending on your
    machine, you might need more setup to use Selenium, so you can check out the official guide. The webpages for each
    class will be stored as HTML files at the folder `myharvard`.
-5. Process these webpages to get the data by running `myharvardscrapper.py`. This will generate `verbose_course_ratings.csv` as required.
+5. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.

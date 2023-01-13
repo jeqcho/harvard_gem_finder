@@ -12,6 +12,13 @@ def process(text, course_code):
         print("Wrong codes")
         print(soup_code)
         return -1
+
+    soup_term = soup.find_all("div", class_="isSCL_LBTermLabel")[0].text
+    if soup_term.strip() != "2023 Spring":
+        print("Wrong term")
+        print(soup_term)
+        return -1
+
     interests = [
         "Course ID:",
         "Course Level:",
@@ -32,7 +39,7 @@ def process(text, course_code):
 
     if "NOTE" in result[-1]:
         result[-1] = result[-1][:-4].strip()
-    
+
     result.append(soup_title)
     print(result)
     return result
@@ -53,8 +60,9 @@ for course_code in course_codes:
         print(e)
 
 df2 = pd.DataFrame(results,
-                   columns=['course_code', 'course_id', 'course_level', 'department', 'subject', 'qrd', 'div', 'gened',
-                            'course_component','course_title_2023'])
+                   columns=['course_code', 'course_id', 'course_level', 'department', 'subject', 'qrd', 'divisional',
+                            'gened',
+                            'course_component', 'course_title_2023'])
 
 df1 = pd.read_csv('course_ratings.csv')
 
