@@ -36,7 +36,7 @@ Most Harvard classes have a workload demand of around 5 hours per week outside o
 
 There is little correlation between the number of students in the class and the score of the class.
 
-![Course score vs number of students graph](readme-images/course_vs_num.png)
+![Course score vs number of students graph](readme-images/course_vs_num_students.png)
 
 More analysis, and the code for the graphs can be found through this [Colab Notebook](https://colab.research.google.com/drive/1WR3_DSCN_aL7l6b5yqrqto8116Ktb_TY?usp=sharing). A copy of
 the notebook is also available in the repo above as `course_ratings_analysis.ipynb`. Remember to upload `verbose_course_ratings.csv` if you hope to tinker around.
