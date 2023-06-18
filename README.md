@@ -59,7 +59,7 @@ this is a step-by-step guide on how to create that csv from scratch.
    stored at the folder `QGuides`.
 3. Run `analyzer.py` to generate `course_ratings.csv`.
 4. Now we have to add details like divisional requirement or whether it fulfils quantitative reasoning with data (QRD),
-   but most importantly we need to know whether this class is offered in Spring 2023 (the QGuides are for Spring 2022).
+   but most importantly we need to know whether this class is offered in Fall 2023 (the QGuides are for Fall 2022).
    Run `myharvarddriver.py` to use Selenium to get these necessary details from my.harvard.edu. Depending on your
    machine, you might need more setup to use Selenium, so you can check out the official guide. The webpages for each
    class will be stored as HTML files at the folder `myharvard`.

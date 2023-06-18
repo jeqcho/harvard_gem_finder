@@ -19,6 +19,9 @@ def process_rows(raw_rows):
 
 def get_stats(raw_rows):
     rows = process_rows(raw_rows)
+    if int(rows[0]) == 0:
+        # no one answered this question
+        return [0, 0, 0, -1]
     freqs = rows[1:-2]
     freqs = [int(x[:-1]) for x in freqs]
     scores = []
@@ -52,6 +55,14 @@ def get_gem_score(comment):
 num_errors = 0
 
 
+def get_table_with(tables, th_text):
+    # returns None or the table with the first th equals th_text
+    for table in tables:
+        if table.tr.th and table.tr.th.text.strip() == th_text:
+            return table
+    return None
+
+
 def analyze(unique_code):
     global num_errors
     with open('QGuides/' + unique_code + '.html', 'r') as f:
@@ -60,7 +71,6 @@ def analyze(unique_code):
     tables = soup.find_all('tbody')
     print(unique_code)
     no_comment_flag = False
-    no_lecturer_score_flag = False
     if len(tables) != 8:
         if len(tables) < 3:
             print('Course missing most tables')
@@ -70,43 +80,50 @@ def analyze(unique_code):
         if tables[-1].th and tables[-1].th.text.strip() == 'Elective':
             print('Course missing comments table')
             no_comment_flag = True
-        else:
-            # ensure that the missing table is the lecturer scores
-            assert tables[1].th.text.strip() == 'Evaluate the course overall.'
-            assert tables[2].th.text.strip() == 'Response Count'
-            print('Course missing lecturer score table')
-            no_lecturer_score_flag = True
     # number of students
-    num_responded = tables[0].find_all('td')[0].text
-    num_students = tables[0].find_all('td')[1].text
+    response_rate_table = get_table_with(tables, 'Responded')
+    assert response_rate_table
+    num_responded = response_rate_table.find_all('td')[0].text
+    num_students = response_rate_table.find_all('td')[1].text
 
     # course score
-    course_score_rows = tables[1].tr.find_all('td')
+    course_score_table = get_table_with(tables, 'Evaluate the course overall.')
+    assert course_score_table
+    course_score_rows = course_score_table.tr.find_all('td')
     course_score_stats = get_stats(course_score_rows)
 
     # lecturer score
-    if no_lecturer_score_flag:
-        lecturer_score_stats = [0, 0, 0, -1]
-    else:
-        lecturer_score_rows = tables[2].tr.find_all('td')
+    lecturer_score_table = get_table_with(tables, 'Evaluate your Instructor overall.')
+    if lecturer_score_table:
+        lecturer_score_rows = lecturer_score_table.tr.find_all('td')
         lecturer_score_stats = get_stats(lecturer_score_rows)
+    else:
+        lecturer_score_stats = [0, 0, 0, -1]
 
     # workload
-    workload_rows = tables[3].find_all('td')
-    workload_stats = process_rows(workload_rows)[-4:]
-    # split , for multi modes and choose max
-    workload_stats = [str(-1) if x == 'N/A' else x for x in workload_stats]
-    workload_stats = [float(x.split(',')[-1]) for x in workload_stats]
+    workload_score_table = get_table_with(tables, 'Response Count')
+    if workload_score_table:
+        workload_rows = workload_score_table.find_all('td')
+        workload_stats = process_rows(workload_rows)[-4:]
+        # split , for multi modes and choose max
+        workload_stats = [str(-1) if x == 'N/A' else x for x in workload_stats]
+        workload_stats = [float(x.split(',')[-1]) for x in workload_stats]
+    else:
+        workload_stats = [0, 0, 0, -1]
 
     # recommendation
     rec_freqs = []
-    for row in tables[4].find_all('tr'):
+    first_rec_table = get_table_with(tables, 'Recommend with Enthusiasm')
+    assert first_rec_table
+    for row in first_rec_table.find_all('tr'):
         rec_freqs.append(int(row.find_all('td')[1].text))
     rec_freqs.reverse()
     recs = []
     for i in range(5):
         recs += [i + 1] * rec_freqs[i]
-    rec_rows = tables[5].find_all('td')
+    second_rec_table = get_table_with(tables, 'Response Ratio')
+    assert second_rec_table
+    rec_rows = second_rec_table.find_all('td')
     rec_stats = process_rows(rec_rows)[-3:]
     rec_stats = [float(x) for x in rec_stats]
     rec_stats.insert(2, statistics.mode(recs))
@@ -122,7 +139,7 @@ def analyze(unique_code):
         sentiment_stats = [0, 0, 0, -1]
         gem_stats = [0, 0, 0, -1]
     else:
-        comments = [x.text for x in tables[7].find_all('td')]
+        comments = [x.text for x in tables[-1].find_all('td')]
         sentiment_scores = []
         gem_scores = []
         for comment in comments:
@@ -176,8 +193,8 @@ def analyze(unique_code):
     ]
 
 
-# demo
-print(analyze('FAS-219744-2222-1-1-001(Michael Smith)'))
+# demo or debug
+print(analyze('FAS-115778-2228-1-1-001(Berker)'))
 
 df = pd.read_csv('courses.csv')
 unique_codes = df.unique_code.tolist()

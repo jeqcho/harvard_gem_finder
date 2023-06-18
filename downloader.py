@@ -1,4 +1,5 @@
-# downloads 2022 spring q guides and put them in the folder QGuides
+# downloads 2022 fall q guides and put them in the folder QGuides
+# Create the folder first before running this file
 
 import requests
 import pandas as pd
