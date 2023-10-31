@@ -64,3 +64,4 @@ this is a step-by-step guide on how to create that csv from scratch.
    machine, you might need more setup to use Selenium, so you can check out the official guide. The webpages for each
    class will be stored as HTML files at the folder `myharvard`.
 5. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.
+6. Additional data can be obtained by running the Jupyter notebook (`jupyter notebook`) and choose `course_ratings_analysis.ipynb`. This will generate the graphs above and the data at `output_data`.
