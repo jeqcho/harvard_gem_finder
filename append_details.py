@@ -62,7 +62,7 @@ for course_code in course_codes:
 df2 = pd.DataFrame(results,
                    columns=['course_code', 'course_id', 'course_level', 'department', 'subject', 'qrd', 'divisional',
                             'gened',
-                            'course_component', 'course_title_2023'])
+                            'course_component', 'course_title_2024'])
 
 df1 = pd.read_csv('course_ratings.csv')
 
