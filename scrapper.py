@@ -1,5 +1,5 @@
-# scrapes the links for the Q guides for 2022 fall
-# The HTML file is saved from https://qreports.fas.harvard.edu/browse/index?school=FAS&calTerm=2022%20Fall
+# scrapes the links for the Q guides for 2024 Fall
+# The HTML file is saved from https://qreports.fas.harvard.edu/browse/index?school=FAS&calTerm=2024%20Spring
 
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -19,14 +19,14 @@ for link in soup.find_all('a'):
     course_code = segments[0] + ' ' + segments[1].split('-')[0]
     text = ' '.join(segments)[len(course_code) + 1:]
     print(text.split('\n'))
-    course_title, course_teacher, _ = text.split('\n')
-    course_teacher = course_teacher.strip()[1:-1]
+    course_title, course_teacher = text.split('\n (')
+    course_teacher = course_teacher.strip()[:-1]
     row = [
         course_code.strip(),
         course_title.strip(),
         course_teacher.strip(),
         link.get('href'),
-        link.get('name')
+        link.get('id')
     ]
     rows.append(row)
 
@@ -38,4 +38,4 @@ df.to_csv("courses.csv", index=False)
 print(len(df['course_code'])-len(df['course_code'].drop_duplicates()))
 print(len(df['fas_code'])-len(df['fas_code'].drop_duplicates()))
 print(len(df['unique_code'])-len(df['unique_code'].drop_duplicates()))
-print("Number of courses in Fall 2022: " + str(len(rows)))
+print("Number of courses found: " + str(len(rows)))

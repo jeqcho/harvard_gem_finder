@@ -10,11 +10,11 @@ def process(text, course_code):
     soup_title = soup.find_all('h2')[1].text
     if course_code not in soup_code.replace('  ', ' '):
         print("Wrong codes")
-        print(soup_code)
+        print(f'Expected: {course_code} but got {soup_code}')
         return -1
 
     soup_term = soup.find_all("div", class_="isSCL_LBTermLabel")[0].text
-    if soup_term.strip() != "2023 Fall":
+    if soup_term.strip() != "2024 Spring":
         print("Wrong term")
         print(soup_term)
         return -1

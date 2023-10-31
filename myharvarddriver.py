@@ -11,16 +11,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 # remember to create the folder myharvard first
-
-container_url = 'https://courses.my.harvard.edu/psp/courses/EMPLOYEE/EMPL/h/?tab=HU_CLASS_SEARCH&SearchReqJSON=%7B%22ExcludeBracketed%22%3Atrue%2C%22SaveRecent%22%3Atrue%2C%22Facets%22%3A%5B%5D%2C%22PageNumber%22%3A1%2C%22SortOrder%22%3A%5B%22SCORE%22%5D%2C%22TopN%22%3A%22%22%2C%22PageSize%22%3A%22%22%2C%22SearchText%22%3A%22{}%20fall%22%7D'
+season = "spring"
+container_url = 'https://courses.my.harvard.edu/psp/courses/EMPLOYEE/EMPL/h/?tab=HU_CLASS_SEARCH&SearchReqJSON=%7B' \
+                '%22ExcludeBracketed%22%3Atrue%2C%22SaveRecent%22%3Atrue%2C%22Facets%22%3A%5B%5D%2C%22PageNumber%22' \
+                '%3A1%2C%22SortOrder%22%3A%5B%22SCORE%22%5D%2C%22TopN%22%3A%22%22%2C%22PageSize%22%3A%22%22%2C' \
+                '%22SearchText%22%3A%22{}%20' + season + '%22%7D '
 PACKAGES = []
 df = pd.read_csv('courses.csv')
 course_codes = df.course_code.tolist()
 course_codes = list(dict.fromkeys(course_codes))
+# start_index = 0
+# start from a specific class if an error is thrown
+start_index = course_codes.index('TDM 184B')
+with open('not-offered.txt', 'w') as f:
+    f.write('')
+
+not_offered = []
+course_codes = [course_code.replace('/', ' ') for course_code in course_codes]
+
 urls = [container_url.format(urllib.parse.quote(x)) for x in course_codes]
 for i in range(len(urls)):
     PACKAGES.append([urls[i], course_codes[i]])
-
 
 # PACKAGES = PACKAGES[:10]
 
@@ -46,13 +57,10 @@ class AnyEc:
                 pass
 
 
-start_index = 0
-# start from a specific class if an error is thrown
-# start_index = course_codes.index('AFRAMER 11')
-not_offered = []
-for package in PACKAGES[start_index:]:
+for idx, package in enumerate(PACKAGES[start_index:]):
     url = package[0]
     course_code = package[1]
+    print(f'{idx}/{len(PACKAGES[start_index:])}')
     print(course_code)
     driver.get(url)
     time.sleep(1)
@@ -70,8 +78,8 @@ for package in PACKAGES[start_index:]:
         print(e)
         print('no such element')
         not_offered.append(course_code)
+        with open('not-offered.txt', 'a') as f:
+            f.write(course_code + '\n')
 
-with open('not-offered.txt', 'a') as f:
-    f.write('\n'.join(not_offered))
 # infinite loop
 driver.quit()

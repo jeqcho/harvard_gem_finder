@@ -125,6 +125,7 @@ def analyze(unique_code):
     assert second_rec_table
     rec_rows = second_rec_table.find_all('td')
     rec_stats = process_rows(rec_rows)[-3:]
+    rec_stats = [str(-1) if x == 'N/A' else x for x in rec_stats]
     rec_stats = [float(x) for x in rec_stats]
     rec_stats.insert(2, statistics.mode(recs))
 
@@ -194,7 +195,7 @@ def analyze(unique_code):
 
 
 # demo or debug
-print(analyze('FAS-115778-2228-1-1-001(Berker)'))
+print(analyze('FAS-111404-2232-1-1-001(Glaeser)'))
 
 df = pd.read_csv('courses.csv')
 unique_codes = df.unique_code.tolist()
