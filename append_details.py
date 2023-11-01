@@ -7,7 +7,7 @@ df = pd.read_csv('courses.csv')
 def process(text, course_code):
     soup = BeautifulSoup(text, 'html.parser')
     soup_code = soup.find_all('h3')[0].text
-    soup_title = soup.find_all('h2')[1].text
+    soup_title = soup.find_all('h2')[2].text
     if course_code not in soup_code.replace('  ', ' '):
         print("Wrong codes")
         print(f'Expected: {course_code} but got {soup_code}')
