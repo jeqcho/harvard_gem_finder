@@ -55,7 +55,7 @@ this is a step-by-step guide on how to create that csv from scratch.
 
 1. Download the webpage from the link in `scrapper.py` as a HTML file named`QReports.html`. Run `scrapper.py` to scrape the links for the QGuides for each course. The links generated will be stored at `courses.csv`.
 2. Visit any QGuide links scrapped at `courses.csv` to get the cookies (see the code of `downloader.py` for the search term `secret_cookie`) and paste it at a new file named `secret_cookie.txt`. Run `downloader.py` to download all the QGuides with the links scrapped from the previous step. The QGuides will be
-   stored at the folder `QGuides`. Since 2024, QGuide reports now require authentication, so after scrapping we do not publish them at GitHub. The links are still available in `courses.csv` if you want to download them.
+   stored at the folder `QGuides`.
 3. Run `analyzer.py` to generate `course_ratings.csv`.
 4. Now we have to add details like divisional requirement or whether it fulfils quantitative reasoning with data (QRD),
    but most importantly we need to know whether this class is offered in Fall 2024 (the QGuides are for Fall 2023).
