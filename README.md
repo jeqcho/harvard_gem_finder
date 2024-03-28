@@ -64,4 +64,4 @@ this is a step-by-step guide on how to create that csv from scratch.
    class will be stored as HTML files at the folder `myharvard`. This should be the step that takes the longest (around 1.5 hours), I usually leave it running overnight.
 5. New in 2024 Fall, some classes have sections to be chosen during registration, like CHNSE 130 and EXPOS 40. Run `rescrape.py` to handle these cases which require an additional click.
 6. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.
-7. Additional data can be obtained by running the Jupyter notebook (`jupyter notebook`) and choose `course_ratings_analysis.ipynb`. This will generate the graphs above and the data at `output_data`.
+7. Start a Jupyter notebook session (`jupyter notebook`) and choose `course_ratings_analysis.ipynb` to run. This will generate the graphs above and the data at `output_data`. Follow through the notebook and play around!
