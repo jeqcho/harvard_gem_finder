@@ -1,9 +1,10 @@
 # downloads q guides and put them in the folder QGuides
-# Create the folder first before running this file
 
-import requests
-import pandas as pd
 import concurrent.futures
+import os
+
+import pandas as pd
+import requests
 
 PACKAGES = []
 
@@ -21,13 +22,26 @@ preprocess_qlinks()
 # PACKAGES = PACKAGES[:10]
 global_count = 0
 
+# Create the QGuide folder if not exist
+if not os.path.exists('QGuides'):
+    os.makedirs('QGuides')
+
+# Choose any QGuide link, visit it on your browser, then open DevTools to copy everything in the cookie field
+# There should be three cookies: ASP.NET_SessionId, CookieName, and session_token
+# Copy paste the entire cookie string into secret_cookie.txt as one line.
+with open('secret_cookie.txt', 'r') as f:
+    cookie = f.read()
+
 
 # Retrieve a single page and report the URL and contents
 def load_url(package, timeout):
     global global_count
     url = package[0]
     filename = package[1]
-    page = requests.get(url)
+    headers = {
+        'Cookie': cookie
+    }
+    page = requests.get(url, headers=headers)
     with open('QGuides/' + filename + '.html', 'w') as f:
         f.write(page.text)
     global_count += 1

@@ -1,12 +1,13 @@
 # analyze the courses
 
-from bs4 import BeautifulSoup
-import statistics
 # from scipy import stats
 import re
+import statistics
 
-from nltk.sentiment import SentimentIntensityAnalyzer
 import pandas as pd
+from bs4 import BeautifulSoup
+from nltk.sentiment import SentimentIntensityAnalyzer
+from tqdm import tqdm
 
 # import nltk
 # nltk.download('vader_lexicon')
@@ -36,18 +37,23 @@ def get_stats(raw_rows):
     return [mean, median, mode, stdev]
 
 
-def get_gem_score(comment):
+possible_gem_sentences = []
+
+
+def get_gem_probability(comment):
     sentences = comment.split('.')
     for sentence in sentences:
-        if 'gem' in sentence.lower():
-            if re.search(r'''not a '?"?gem''', sentence.lower()):
-                print("NOT A GEM:")
-                print(sentence)
-                return -0.5
-            if re.search(r'\bgem\b', sentence.lower()) and sia.polarity_scores(sentence)['compound'] > 0:
-                print("GEM DETECTED:")
-                print(sentence)
-                print(sia.polarity_scores(sentence)['compound'])
+        if re.search(r'\bgem\b', sentence.lower()):
+            sentiment = sia.polarity_scores(sentence)['compound']
+            possible_gem_sentences.append((sentence, str(sentiment)))
+            if sentiment <= 0:
+                # negative sentiment, most likely not a gem
+                continue
+            else:
+                if re.search(r'(not)|(isn\'t) a \'?"?gem"?\'?', sentence.lower()):
+                    # explicit claim of not a gem
+                    return 0
+                # good sentiment and no explicit claim of not a gem, so gem
                 return 1
     return 0
 
@@ -73,7 +79,7 @@ def analyze(unique_code):
     no_comment_flag = False
     if len(tables) != 8:
         if len(tables) < 3:
-            print('Course missing most tables')
+            print('ERROR: Course missing most tables')
             num_errors += 1
             return []
         # check if no comments
@@ -132,7 +138,7 @@ def analyze(unique_code):
     # comments
     max_sent_score = 0
     min_sent_score = 0
-    max_gem_score = 0
+    max_gem_sentiment = 0
     best_comment = ''
     worse_comment = ''
     best_gem_comment = ''
@@ -142,7 +148,7 @@ def analyze(unique_code):
     else:
         comments = [x.text for x in tables[-1].find_all('td')]
         sentiment_scores = []
-        gem_scores = []
+        gem_probabilities = []
         for comment in comments:
             sentiment_score = sia.polarity_scores(comment)['compound']
             sentiment_scores.append(sentiment_score)
@@ -153,17 +159,17 @@ def analyze(unique_code):
                 min_sent_score = sentiment_score
                 worse_comment = comment
 
-            gem_score = get_gem_score(comment)
-            gem_scores.append(gem_score)
-            if gem_score > 0 and sentiment_score > 0 and sentiment_score > max_gem_score:
-                max_gem_score = sentiment_score
+            gem_probability = get_gem_probability(comment)
+            gem_probabilities.append(gem_probability)
+            if gem_probability > 0 and sentiment_score > 0 and sentiment_score > max_gem_sentiment:
+                max_gem_sentiment = sentiment_score
                 best_gem_comment = comment
 
-        gem_stats = [statistics.mean(gem_scores),
-                     statistics.median(gem_scores),
-                     statistics.mode(gem_scores)]
-        if len(gem_scores) > 1:
-            gem_stats.append(statistics.stdev(gem_scores))
+        gem_stats = [statistics.mean(gem_probabilities),
+                     statistics.median(gem_probabilities),
+                     statistics.mode(gem_probabilities)]
+        if len(gem_probabilities) > 1:
+            gem_stats.append(statistics.stdev(gem_probabilities))
         else:
             gem_stats.append(-1)
 
@@ -190,17 +196,17 @@ def analyze(unique_code):
         worse_comment,
         min_sent_score,
         best_gem_comment,
-        max_gem_score
+        max_gem_sentiment
     ]
 
 
 # demo or debug
-print(analyze('FAS-111404-2232-1-1-001(Glaeser)'))
+# print(analyze('FAS-111404-2232-1-1-001(Glaeser)'))
 
 df = pd.read_csv('courses.csv')
 unique_codes = df.unique_code.tolist()
 stats = []
-for code in unique_codes:
+for code in tqdm(unique_codes):
     stats.append(analyze(code))
 print("num_errors: " + str(num_errors))
 
@@ -228,17 +234,21 @@ df2 = pd.DataFrame(stats, columns=[
     "sentiment_score_median",
     "sentiment_score_mode",
     "sentiment_score_stdev",
-    "gem_score_mean",
-    "gem_score_median",
-    "gem_score_mode",
-    "gem_score_stdev",
+    "gem_probability_mean",
+    "gem_probability_median",
+    "gem_probability_mode",
+    "gem_probability_stdev",
     "best_comment",
     "max_sent_score",
     "worse_comment",
     "min_sent_score",
     "best_gem_comment",
-    "max_gem_score"
+    "max_gem_probability"
 ])
 
 df3 = pd.merge(df, df2, on='unique_code')
 df3.to_csv('course_ratings.csv', index=False)
+
+with open('gem_sentences.txt', 'w') as file:
+    for tup in possible_gem_sentences:
+        file.write(': '.join(map(str, tup)) + '\n')

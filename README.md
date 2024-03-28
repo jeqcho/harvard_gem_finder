@@ -42,7 +42,7 @@ More analysis, and the code for the graphs can be found through this [Colab Note
 the notebook is also available in the repo above as `course_ratings_analysis.ipynb`. Remember to upload `verbose_course_ratings.csv` if you hope to tinker around.
 
 ## Website
-The code for the website can be found at [this repo](https://github.com/jeqcho/harvard-gems).
+The code for the website can be found at [this repo](https://github.com/jeqcho/harvard-gems). This repo is for the scrapping and analytics.
 
 ## Installation
 
@@ -53,15 +53,15 @@ The code for the website can be found at [this repo](https://github.com/jeqcho/h
 You probably don't need to follow the steps below since the results can be found at `verbose_course_ratings.csv`, but
 this is a step-by-step guide on how to create that csv from scratch.
 
-1. Run `scrapper.py` to scrape the links for the QGuides from `QReports.html`. The link to the HTML file is available
-   in `scrapper.py`. The links generated will be stored at `courses.csv`.
-2. Run `downloader.py` to download all the QGuides with the links scrapped from the previous step. The QGuides will be
-   stored at the folder `QGuides`.
+1. Download the webpage from the link in `scrapper.py` as a HTML file named`QReports.html`. Run `scrapper.py` to scrape the links for the QGuides for each course. The links generated will be stored at `courses.csv`.
+2. Visit any QGuide links scrapped at `courses.csv` to get the cookies (see the code of `downloader.py` for the search term `secret_cookie`) and paste it at a new file named `secret_cookie.txt`. Run `downloader.py` to download all the QGuides with the links scrapped from the previous step. The QGuides will be
+   stored at the folder `QGuides`. Since 2024, QGuide reports now require authentication, so after scrapping we do not publish them at GitHub. The links are still available in `courses.csv` if you want to download them.
 3. Run `analyzer.py` to generate `course_ratings.csv`.
 4. Now we have to add details like divisional requirement or whether it fulfils quantitative reasoning with data (QRD),
-   but most importantly we need to know whether this class is offered in Fall 2023 (the QGuides are for Fall 2022).
+   but most importantly we need to know whether this class is offered in Fall 2024 (the QGuides are for Fall 2023).
    Run `myharvarddriver.py` to use Selenium to get these necessary details from my.harvard.edu. Depending on your
    machine, you might need more setup to use Selenium, so you can check out the official guide. The webpages for each
-   class will be stored as HTML files at the folder `myharvard`.
-5. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.
-6. Additional data can be obtained by running the Jupyter notebook (`jupyter notebook`) and choose `course_ratings_analysis.ipynb`. This will generate the graphs above and the data at `output_data`.
+   class will be stored as HTML files at the folder `myharvard`. This should be the step that takes the longest (around 1.5 hours), I usually leave it running overnight.
+5. New in 2024 Fall, some classes have sections to be chosen during registration, like CHNSE 130 and EXPOS 40. Run `rescrape.py` to handle these cases which require an additional click.
+6. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.
+7. Additional data can be obtained by running the Jupyter notebook (`jupyter notebook`) and choose `course_ratings_analysis.ipynb`. This will generate the graphs above and the data at `output_data`.

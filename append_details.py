@@ -14,7 +14,7 @@ def process(text, course_code):
         return -1
 
     soup_term = soup.find_all("div", class_="isSCL_LBTermLabel")[0].text
-    if soup_term.strip() != "2024 Spring":
+    if soup_term.strip() != "2024 Fall":
         print("Wrong term")
         print(soup_term)
         return -1
@@ -47,7 +47,12 @@ def process(text, course_code):
 
 results = []
 course_codes = list(dict.fromkeys(df.course_code.tolist()))
-for course_code in course_codes:
+
+# for debug
+start_index = 0
+# start_index = course_codes.index('AFVS 40H')
+
+for course_code in course_codes[start_index:]:
     print(course_code)
     try:
         with open('myharvard/' + course_code + '.html', 'r') as f:

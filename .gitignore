@@ -3,3 +3,6 @@
 # git ignore anything that starts with ~$
 ~$*
 .idea/*
+
+secret_cookie.txt
+QGuides/*

@@ -1,5 +1,6 @@
-# scrapes the links for the Q guides for 2024 Fall
-# The HTML file is saved from https://qreports.fas.harvard.edu/browse/index?school=FAS&calTerm=2024%20Spring
+# scrapes the links for the Q guides for 2023 Fall (for 2024 Fall reference)
+# The HTML file is saved from https://qreports.fas.harvard.edu/browse/index?school=FAS&calTerm=2024%20Fall
+# Edit the last few words if necessary
 
 from bs4 import BeautifulSoup
 import pandas as pd
