@@ -76,3 +76,7 @@ this is a step-by-step guide on how to create that csv from scratch.
 6. Process these webpages to get the data by running `append_details.py`. This will generate `verbose_course_ratings.csv` as required.
 7. Start a Jupyter notebook session (`jupyter notebook`) and choose `course_ratings_analysis.ipynb` to run. This will generate the graphs above and the data at `output_data`. Follow through the notebook and play around!
 8. If you are maintaining this repo, then please make a folder under archive for the upcoming semester, and then put the following files there: `course_ratings.csv`, `courses.csv`, `not-offered.txt`, `QReports.html`, `verbose_course_ratings.csv`.
+
+
+# Future todo
+I have been told that it is possible to scrape the classes from my.harvard using an API (e.g. by looking at the requests at the Network tab) without authentication.
